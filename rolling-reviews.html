@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>수강생 후기 롤링 섹션</title>
+</head>
+<body>
+
+<!-- 이 script 블록만 복사해서 기존 페이지에 붙여넣으면 됩니다 -->
+<script>
+(function() {
+  // ========== 1. CSS 주입 ==========
+  const style = document.createElement('style');
+  style.textContent = `
+    .rv-section {
+      width: 100%;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 48px 0;
+      overflow: hidden;
+      font-family: 'Pretendard', -apple-system, 'Noto Sans KR', sans-serif;
+      background: #111;
+      color: #fff;
+    }
+    .rv-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 24px;
+      margin-bottom: 28px;
+    }
+    .rv-header h2 {
+      font-size: 22px;
+      font-weight: 700;
+      color: #fff;
+      margin: 0;
+    }
+    .rv-header .rv-count {
+      font-size: 16px;
+      font-weight: 600;
+      color: #4fc3f7;
+    }
+    .rv-track-wrapper {
+      overflow: hidden;
+      width: 100%;
+    }
+    .rv-track {
+      display: flex;
+      gap: 20px;
+      width: max-content;
+      animation: rvRoll 30s linear infinite;
+    }
+    .rv-track:hover {
+      animation-play-state: paused;
+    }
+    @keyframes rvRoll {
+      0% { transform: translateX(0); }
+      100% { transform: translateX(-50%); }
+    }
+    .rv-card {
+      flex-shrink: 0;
+      width: 280px;
+      background: #1e1e1e;
+      border-radius: 12px;
+      overflow: hidden;
+      cursor: pointer;
+      transition: transform 0.2s;
+    }
+    .rv-card:hover {
+      transform: translateY(-4px);
+    }
+    .rv-card-image {
+      width: 100%;
+      height: 200px;
+      background-size: cover;
+      background-position: center;
+      background-color: #2a2a2a;
+    }
+    .rv-card-body {
+      padding: 16px;
+    }
+    .rv-card-user {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+    .rv-avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: #444;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+      font-weight: 600;
+      color: #ccc;
+      flex-shrink: 0;
+    }
+    .rv-username {
+      font-size: 14px;
+      font-weight: 600;
+      color: #e0e0e0;
+    }
+    .rv-card-text {
+      font-size: 13px;
+      line-height: 1.6;
+      color: #aaa;
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      margin: 0;
+    }
+  `;
+  document.head.appendChild(style);
+
+  // ========== 2. 후기 데이터 ==========
+  // 이미지 폴더 경로 (배포 시 실제 경로로 변경)
+  var imgBase = '주니어 블로그 후기/';
+
+  const reviews = [
+    {
+      image: imgBase + '900_Screenshot_20260424_115130__.jpg',
+      name: '소리튠수강생',
+      text: '레벨 1로 넘어오면서 힘이 살짝 빠지고 소리가 부드러워지기 시작했고, 요즘은 코치님의 피드백을 통해 부족한 부분 수정해나가면서 조금씩 성장해가는 모습이 보인다.'
+    },
+    {
+      image: imgBase + '20260416125504.png',
+      name: '꾸준히맘',
+      text: '소리는 하루 아침에 완성되지 않다는 것을 하지만 매일 꾸준히 듣고 훈련하다보면 어느 순간 소리는 달라진다는 것을 소리튠 주니어 영어학교를 통해 느꼈답니다!!'
+    },
+    {
+      image: imgBase + '900_20260422_204743.jpg',
+      name: '민서맘',
+      text: '소리튠은 신기하게도 10분정도의 주아쌤 강의도 40분의 줌수업도 책상에 앉아 스스로 잘 듣는다. 줌강의는 7세부터 중학생까지 다양한 연령층이 함께하며, 혼자일 때와는 차원이 다른 몰입감을 만들어 낸다.'
+    },
+    {
+      image: imgBase + 'videoframe_3756.png',
+      name: '행복한엄마',
+      text: '무엇보다 코치님이 정말 최고시다\u2764\uFE0F 아이의 수준과 성향을 정확하게 파악해서 지도해주시고, 밝고 친절하셔서 내성적인 아이가 수업중에 선생님이랑 재잘재잘하는 모습을 보고 너무 기쁘고 흐뭇\uD83D\uDE0D'
+    },
+    {
+      image: imgBase + 'KakaoTalk_20260504_081130520.jpg',
+      name: '쉐도잉러버',
+      text: '매일 하는 쉐도잉으로 영어를 익숙하고 자연스럽게 다가오게 만드는 게 목표였다. 밥 먹듯이 하는 영어, 즐거운 영어 그냥 자연스러운 일이라고 몸이 기억하도록 만들어 쉽고 재밌는 영어를 할 수 있게 되는 것이 모두 소리튠 덕분이다.'
+    },
+    {
+      image: imgBase + 'IMG＿8587.jpg',
+      name: '두아이맘',
+      text: '2주가 지났어요 아이들이 달라졌어요. 줄 세우는 시험도 없고, 틀리면 혼나는 분위기도 없어요. 그냥 소리를 듣고, 따라하고, 발표하면 칭찬받아요. 틀려도 괜찮아요. 그냥 다시 해보면 되니까요.'
+    },
+    {
+      image: imgBase + '900_20260410_122052.jpg',
+      name: '발음도전',
+      text: '\'한국식 영어발음은 피하자\' 라는 마음으로 레벨0 소리튜닝단계를 드디어 마치고 이제 레벨1을 시작하게 되었다. 소리내는 방법을 배웠으니 소리가 조금씩 달라지고 있는 것 같은 느낌적인 느낌\uD83E\uDD14'
+    },
+    {
+      image: imgBase + 'output＿1986407569.jpg',
+      name: '주아쌤팬',
+      text: '무엇보다 주아쌤의 교육철학이 정말 좋다\uD83D\uDE0D \'영어공부 해야지\' \u274C \'카드 모아야지\' \u2B55 그런데 굳이 말안해도 카드모으느라 혈안이 오른다. (학기마다 모은 코인으로 금융캠프는 덤\uD83E\uDD73)'
+    },
+    {
+      image: imgBase + 'KakaoTalk_20260504_081130520_01.jpg',
+      name: '7살아들맘',
+      text: '이미 만들어진 시스템 안에서 그냥 저냥 계속 흘러가게 두는 것이 아니라, 필요한 부분에 따라 즉각적으로 변화시켜 더 좋은, 더 편리한, 더 재밌는 방법들로 채워나가는 소리튠 주니어 영어학교! 7살 짜리 남자아이가 좋아하는게 신기하네요~!!'
+    }
+  ];
+
+  // ========== 3. HTML 생성 & 삽입 ==========
+  function createCard(r) {
+    return '<div class="rv-card">'
+      + '<div class="rv-card-image" style="background-image:url(\'' + r.image + '\')"></div>'
+      + '<div class="rv-card-body">'
+      + '<div class="rv-card-user">'
+      + '<div class="rv-avatar">' + r.name.charAt(0) + '</div>'
+      + '<span class="rv-username">' + r.name + '</span>'
+      + '</div>'
+      + '<p class="rv-card-text">' + r.text + '</p>'
+      + '</div></div>';
+  }
+
+  var cardsHTML = '';
+  // 2번 반복하여 무한 롤링 효과
+  for (var i = 0; i < 2; i++) {
+    for (var j = 0; j < reviews.length; j++) {
+      cardsHTML += createCard(reviews[j]);
+    }
+  }
+
+  var section = document.createElement('div');
+  section.className = 'rv-section';
+  section.innerHTML =
+    '<div class="rv-header">'
+    + '<h2>아이들 리얼 후기</h2>'
+    + ''
+    + '</div>'
+    + '<div class="rv-track-wrapper">'
+    + '<div class="rv-track">' + cardsHTML + '</div>'
+    + '</div>';
+
+  // 현재 script 태그 위치에 삽입
+  document.currentScript.parentNode.insertBefore(section, document.currentScript);
+})();
+</script>
+
+</body>
+</html>
